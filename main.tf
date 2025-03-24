@@ -72,9 +72,9 @@ resource "aws_chatbot_slack_channel_configuration" "this" {
   }
   configuration_name          = try(each.value.name, "") != "" ? each.value.name : format("%s-%s-slack-chatbot", try(each.value.name_prefix, each.key), local.system_name_short)
   iam_role_arn                = aws_iam_role.this[each.key].arn
-  guardrail_policy_arns       = try(each.value.guardrail_policy_arns, null)
   slack_channel_id            = each.value.slack.channel_id
   slack_team_id               = data.aws_chatbot_slack_workspace.this[each.key].slack_team_id
+  guardrail_policy_arns       = try(each.value.guardrail_policy_arns, null)
   logging_level               = try(each.value.logging_level, null)
   sns_topic_arns              = try(each.value.sns_topic_arns, null)
   user_authorization_required = try(each.value.user_authorization_required, null)
@@ -86,12 +86,17 @@ resource "aws_chatbot_teams_channel_configuration" "this" {
     for key, config in var.configs : key => config
     if try(config.teams, null) != null
   }
-  configuration_name = try(each.value.name, "") != "" ? each.value.name : format("%s-%s-teams-chatbot", try(each.value.name_prefix, each.key), local.system_name_short)
-  channel_id         = each.value.teams.channel_id
-  iam_role_arn       = aws_iam_role.this[each.key].arn
-  team_id            = each.value.teams.team_id
-  tenant_id          = each.value.teams.tenant_id
-  tags               = local.all_tags
+  configuration_name          = try(each.value.name, "") != "" ? each.value.name : format("%s-%s-teams-chatbot", try(each.value.name_prefix, each.key), local.system_name_short)
+  channel_id                  = each.value.teams.channel_id
+  iam_role_arn                = aws_iam_role.this[each.key].arn
+  team_id                     = each.value.teams.team_id
+  tenant_id                   = each.value.teams.tenant_id
+  team_name                   = each.value.teams.team_name
+  guardrail_policy_arns       = try(each.value.guardrail_policy_arns, null)
+  logging_level               = try(each.value.logging_level, null)
+  sns_topic_arns              = try(each.value.sns_topic_arns, null)
+  user_authorization_required = try(each.value.user_authorization_required, null)
+  tags                        = local.all_tags
 }
 
 
