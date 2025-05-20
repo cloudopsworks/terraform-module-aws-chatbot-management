@@ -42,9 +42,17 @@ data "aws_iam_policy_document" "this" {
     actions = [
       "cloudwatch:Describe*",
       "cloudwatch:Get*",
-      "cloudwatch:List*"
+      "cloudwatch:List*",
     ]
     resources = ["*"]
+  }
+  statement {
+    sid = "CloudWatchLogsGetRead"
+    effect = "Allow"
+    actions = [
+      "logs:Describe*",
+      "logs:Get*",
+    ]
   }
 }
 
