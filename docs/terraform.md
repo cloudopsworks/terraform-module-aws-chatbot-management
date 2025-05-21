@@ -8,7 +8,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.92.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
 
 ## Modules
 
@@ -42,4 +42,7 @@
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_slack_channels"></a> [slack\_channels](#output\_slack\_channels) | n/a |
+| <a name="output_teams_channels"></a> [teams\_channels](#output\_teams\_channels) | n/a |
