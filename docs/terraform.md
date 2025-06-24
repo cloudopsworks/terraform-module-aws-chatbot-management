@@ -3,6 +3,7 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.80 |
 
 ## Providers
 
@@ -42,4 +43,7 @@
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_slack_channels"></a> [slack\_channels](#output\_slack\_channels) | n/a |
+| <a name="output_teams_channels"></a> [teams\_channels](#output\_teams\_channels) | n/a |
