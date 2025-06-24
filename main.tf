@@ -18,6 +18,7 @@ resource "aws_iam_role" "this" {
   }
   name               = format("%s-%s-chatbot-role", each.key, local.system_name)
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
+  tags               = local.all_tags
 }
 
 data "aws_iam_policy_document" "assume_role" {
@@ -47,7 +48,7 @@ data "aws_iam_policy_document" "this" {
     resources = ["*"]
   }
   statement {
-    sid = "CloudWatchLogsGetRead"
+    sid    = "CloudWatchLogsGetRead"
     effect = "Allow"
     actions = [
       "logs:Describe*",
