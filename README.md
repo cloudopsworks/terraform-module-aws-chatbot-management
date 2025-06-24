@@ -15,7 +15,7 @@
 
 
 
-
+A Terraform module for managing AWS Chatbot configurations, enabling integration with Slack and Microsoft Teams for AWS service notifications and commands. This module streamlines the setup and management of chatbot configurations through Infrastructure as Code.
 
 
 ---
@@ -48,10 +48,93 @@ We have [*lots of terraform modules*][terraform_modules] that are Open Source an
 
 
 
+## Introduction
+
+AWS Chatbot is a service that enables DevOps teams to monitor and interact with AWS resources through chat channels. This module provides a standardized way to configure and manage AWS Chatbot integrations, supporting both Slack and Microsoft Teams platforms.
+
+## Usage
 
 
+**IMPORTANT:** The `master` branch is used in `source` just as an example. In your code, do not pin to `master` because there may be breaking changes between releases.
+Instead pin to the release tag (e.g. `?ref=vX.Y.Z`) of one of our [latest releases](https://github.com/cloudopsworks/terraform-module-aws-chatbot-management/releases).
 
 
+To use this module, configure the following settings in your Terraform or Terragrunt configuration:
+
+Required Variables:
+- workspace_id: The Slack workspace ID or Microsoft Teams tenant ID
+- channel_id: The target channel identifier
+- configuration_name: Unique name for the chatbot configuration
+
+Optional Variables:
+- logging_level: Set logging verbosity (ERROR, INFO, NONE)
+- guardrail_policies: List of IAM policy ARNs for additional permissions
+- user_role_required: Boolean to enforce IAM user role requirement
+- sns_topic_arns: List of SNS topics for notifications
+
+## Quick Start
+
+1. Create a new Terragrunt configuration file (terragrunt.hcl)
+2. Configure the module source and version
+3. Set required variables:
+   - workspace_id
+   - channel_id
+   - configuration_name
+4. Add optional settings as needed
+5. Run:
+   ```bash
+   terragrunt init
+   terragrunt plan
+   terragrunt apply
+   ```
+
+
+## Examples
+
+# Basic configuration with Terragrunt
+```hcl
+include {
+  path = find_in_parent_folders()
+}
+
+terraform {
+  source = "git::https://github.com/cloudopsworks/terraform-module-aws-chatbot-management.git?ref=v1.0.0"
+}
+
+inputs = {
+  workspace_id = "T0123456789"
+  channel_id = "C0123456789"
+  configuration_name = "prod-notifications"
+  logging_level = "INFO"
+  guardrail_policies = [
+    "arn:aws:iam::aws:policy/ReadOnlyAccess"
+  ]
+  user_role_required = true
+  sns_topic_arns = [
+    "arn:aws:sns:us-east-1:123456789012:alerts"
+  ]
+}
+```
+
+# Settings Reference:
+```yaml
+settings:
+  <config-id>:
+    name: <config-name> # (Optional) The name of the configuration set
+    name_prefix: <config-name-prefix> # (Optional) The name prefix of the configuration set
+    guardrail_policy_arn: <guardrail-policy-arn> # (Optional) The ARN of the AWS Config rule to monitor the configuration set
+    logging_level: ERROR | INFO | NONE # (Optional) The logging level of the configuration set
+    sns_topic_arns: [<sns-topic-arn>, ...] # (Optional) The list of SNS topic ARNs to which the configuration set will publish events.
+    user_authorization_required: true | false # (Optional) Indicates whether the configuration set requires user authorization for the configuration set to receive events
+    slack: # (Optional) The Slack configuration object if the destination is a Slack Channel
+      workspace_name: "my-slack-workspace"
+      channel_id: "my-slack-channel-id"
+    teams: # (Optional) The Microsoft Teams configuration object if the destination is a Microsoft Teams Channel
+      channel_id: "my-teams-channel-id"
+      team_id: "my-teams-team-id"
+      team_name: "my-teams-team-name" # (Optional)
+      tenant_id: "my-teams-tenant-id"
+```
 
 
 
@@ -71,6 +154,7 @@ Available targets:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.80 |
 
 ## Providers
 
@@ -110,7 +194,10 @@ Available targets:
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_slack_channels"></a> [slack\_channels](#output\_slack\_channels) | n/a |
+| <a name="output_teams_channels"></a> [teams\_channels](#output\_teams\_channels) | n/a |
 
 
 
