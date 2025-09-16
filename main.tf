@@ -95,7 +95,7 @@ resource "aws_iam_role_policy" "this" {
   }
   role   = aws_iam_role.this[each.key].id
   name   = "chatbot-policy"
-  policy = data.aws_iam_policy_document.combined.json
+  policy = data.aws_iam_policy_document.combined[each.key].json
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
