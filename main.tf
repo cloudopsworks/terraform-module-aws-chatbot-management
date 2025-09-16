@@ -1,7 +1,10 @@
 ##
-# (c) 2024 - Cloud Ops Works LLC - https://cloudops.works/
-#            On GitHub: https://github.com/cloudopsworks
-#            Distributed Under Apache v2.0 License
+# (c) 2021-2025
+#     Cloud Ops Works LLC - https://cloudops.works/
+#     Find us on:
+#       GitHub: https://github.com/cloudopsworks
+#       WebSite: https://cloudops.works
+#     Distributed Under Apache v2.0 License
 #
 
 data "aws_chatbot_slack_workspace" "this" {
@@ -60,13 +63,39 @@ data "aws_iam_policy_document" "this" {
   }
 }
 
+data "aws_iam_policy_document" "sns_policy" {
+  for_each = {
+    for key, config in var.configs : key => config
+    if try(config.slack, null) != null && length(try(config.sns_topic_arns, [])) > 0
+  }
+  statement {
+    sid    = "SNSRead"
+    effect = "Allow"
+    actions = [
+      "sns:List*",
+      "sns:Get*",
+    ]
+    resources = each.value.sns_topic_arns
+  }
+}
+
+data "aws_iam_policy_document" "combined" {
+  for_each = {
+    for key, config in var.configs : key => config
+  }
+  source_policy_documents = [
+    data.aws_iam_policy_document.this.json,
+    try(data.aws_iam_policy_document.sns_policy[each.key].json, jsonencode({}))
+  ]
+}
+
 resource "aws_iam_role_policy" "this" {
   for_each = {
     for key, config in var.configs : key => config
   }
   role   = aws_iam_role.this[each.key].id
   name   = "chatbot-policy"
-  policy = data.aws_iam_policy_document.this.json
+  policy = data.aws_iam_policy_document.combined.json
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
